@@ -1,16 +1,22 @@
-function initModuleImages(config) {
-  var self = this;
-  var component = config.ComponentImages[0];
-  if (component.ModuleImages != "upload-image") {
+function ModulePreview(config) {
+  var component = config.ModuleImages;
+  if (component != "upload-image") {
     console.log("Plugdo Upload-Image requires a configuration")
-  } else {
+
+  } else{
+    var self = this;
+  }
+
     self.registerDataForm = function (configImages) {
       if (configImages[1].data.files && configImages[1].data.files[0]) {
         var reader = new FileReader();
         if (configImages[0].validateSize != false) {
           ValidateImages()
         } else {
-          renderImages();
+          if (configImages[0].preview != true) {
+          } else {
+             renderImages()
+          }
           btnNewImages(configImages)
         }
       }
@@ -22,7 +28,11 @@ function initModuleImages(config) {
             document.getElementById(configImages[0].idErr).innerHTML = "";
           }, 2000);
         } else {
-          renderImages()
+          if (configImages[0].preview != true) {
+          } else {
+             renderImages()
+          }
+         
           btnNewImages(configImages)
         }
       }
@@ -50,13 +60,14 @@ function initModuleImages(config) {
       }
 
       self.saveImages = function (link){
+        console.log('this')
         var formData = new FormData(document.getElementById(configImages[0].nameForm));
         formData.append("dato", "valor");
         $.ajax({
-          url: "/images/upload",
+          url:link.url,
           type: "post",
           dataType: "html",
-          data: JSON.parse(formData),
+          data:formData,
           cache: false,
           contentType: false,
           processData: false,
@@ -79,4 +90,6 @@ function initModuleImages(config) {
       }
     }
   }
-}
+
+
+

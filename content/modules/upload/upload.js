@@ -5,13 +5,6 @@ const router = new Router();
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-// var bodyParser = require('body-parser')
-// router.use(bodyParser.urlencoded({'extended':'true'})); 
-// router.use(bodyParser.json({ type: '*/*' }));
-
-router.get('/images/upload', (req, res) => {
-  res.render('index');
-});
 
 const storage = multer.diskStorage({
   destination: path.join(__dirname, '../../public/images'),
@@ -19,11 +12,10 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 })
-
 const uploadImage = multer({
   storage,
   limits: {
-    fileSize: 1024 * 1024,
+    fileSize: 1000000
   }
 }).single('image');
 
@@ -32,15 +24,8 @@ router.post('/images/upload', (req, res) => {
     if (err) {
       err.message = 'The file is so heavy for my service';
       return res.send(err);
-    }else{
-      console.log(req.body)
     }
+    console.log(req.file);
   });
- 
 });
-
-// router.post('/file/user', (req, res) => {
-//   console.log(req.body.name)
-// })
-
 module.exports = router;
