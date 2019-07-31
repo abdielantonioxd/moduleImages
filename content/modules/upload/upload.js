@@ -17,7 +17,7 @@ const uploadImage = multer({
   limits: {
     fileSize: 1000000
   }
-}).single('image');
+}).any('image',10);
 
 router.post('/images/upload', (req, res) => {
   uploadImage(req, res, (err) => {
@@ -25,7 +25,7 @@ router.post('/images/upload', (req, res) => {
       err.message = 'The file is so heavy for my service';
       return res.send(err);
     }
-    console.log(req.file);
+    console.log(req.files);
   });
 });
 module.exports = router;

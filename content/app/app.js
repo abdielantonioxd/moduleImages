@@ -1,5 +1,7 @@
 'use strict'
-window.moduleP = new ModulePreview({ ModuleImages: "upload-image"})
+window.saveImages = new saveImagesServer({ Module: "upload-image" })
+window.deleteFile = new deleteFileInServer({ Module: "delete-image" })
+
 this.config_Images = [{
   contentImput: "image-upload-wrap",
   input: "file-upload-input",
@@ -8,27 +10,24 @@ this.config_Images = [{
   titleImages: "image-title",
   size: "1024",
   idErr: "errMessage",
-  templateErr: `<div class="alert alert-danger" role="alert">La Imagen no es soportada,Elija otra Imagen</div>`,
-  idAddNewImages: "",
-  templatedBtn: `<button type="button" class="btn btn-success btn-lg btn-sm" onclick="moduleP.addNewData();">Add</button>`,
-  templateNewFileInput: "",
+  templateErr: ``,
   nameForm: "imagesUploadOne",
-  addImages: false, 
   validateSize: false,
-  preview:true,
-
+  preview: false,
+  previewMultiple: false
 }];
 
 function imagesPlugdo(input) {
   config_Images.push({ data: input });
-  moduleP.registerDataForm(config_Images);
+  saveImages.registerDataForm(config_Images);
+  saveImages.MultipleImages({ result: "result", class: "col-md-3" })
 }
 
 function removeImagesPlugdo() {
-  moduleP.removeImages(config_Images);
+  saveImages.removeImages(config_Images);
 }
 
-function saveImages() {
-  moduleP.saveImages({ url: '/images/upload' });
+function saveImagesServ() {
+  saveImages.saveImages({ url: '/images/upload' });
 }
 

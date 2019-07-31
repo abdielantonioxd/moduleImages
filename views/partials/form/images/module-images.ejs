@@ -1,0 +1,34 @@
+<form method="POST" id="imagesUploadOne" enctype="multipart/form-data">
+  <div id="addNew">
+  </div>
+  <div class="image-upload-wrap" id="image-upload-wrap">
+      <input type='file' multiple="multiple" class="file-upload-input" id="file-upload-input"
+          name="image" onchange="imagesPlugdo(this);" />
+      <div class="drag-text">
+          <h3>Seleciona una imagen de tu producto </h3>
+      </div>
+      <div id="errMessage"></div>
+  </div>
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12" id="result">
+          </div>
+      </div>
+  </div>
+  <div class="file-upload-content" id="file-upload-content">
+      <img class="file-upload-image" id="file-upload-image" src="#" alt="your image" />
+      <div class="image-title-wrap">
+          <button type="button" onclick="removeImagesPlugdo()"
+              class="btn btn-danger btn-block">Eliminar
+              <span class="image-title" id="image-title">Uploaded
+                  Image</span>
+          </button>
+      </div>
+  </div>
+  <div class="row mt-3">
+      <div class="col-sm-12">
+          <button type="button" class="btn btn-success  btn-block" onclick="saveImages()">Guardar
+              Imagen</button>
+      </div>
+  </div>
+</form>
