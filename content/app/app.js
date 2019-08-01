@@ -1,28 +1,34 @@
 'use strict'
 window.saveImages = new saveImagesServer({ Module: "upload-image" })
 window.deleteFile = new deleteFileInServer({ Module: "delete-image" })
-this.config= [{
+this.config = [{
   contentImput: "image-upload-wrap",
-  input: "file-upload-input",
+  idInput: "file-upload-input",
   contentUpload: "file-upload-content",
   viewImages: "file-upload-image",
   titleImages: "image-title",
   idErr: "errMessage",
-  templateErr: `<div class="alert alert-danger" role="alert">
-  Imagen no soportada,Intente con otra
-</div>`,
+  templateErr: "",
   nameForm: "imagesUploadOne",
-  validateFormats:true,
-  size: 1024,
-  validateSize: false,
+  validateFormats: true,
+  size: 1024 * 1024,
+  validateSize: true,
   preview: false,
-  previewMultiple: true
+  previewMultiple: false,
+  useSweetAlert: false,
+  useAlertify: true
 }];
+
+function templated() {
+  return `<div class="alert alert-danger" role="alert">
+  Imagen excede el limite autorizado
+  </div>`;
+}
 
 function imagesPlugdo(input) {
   config.push({ data: input });
   saveImages.registerDataForm(config);
-  saveImages.MultipleImages({ result: "result", class: "col-md-3" })
+  saveImages.MultipleImages({ result: "result", class: "col-lg-4", active: true })
 }
 
 function removeImagesPlugdo() {
@@ -30,6 +36,6 @@ function removeImagesPlugdo() {
 }
 
 function saveImagesServ() {
-  saveImages.saveImages({ url: '/images/upload' });
+  saveImages.saveImages({ url: '/post' });
 }
 
