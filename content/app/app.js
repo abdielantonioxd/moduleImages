@@ -1,40 +1,35 @@
 'use strict'
-window.moduleP = new initModuleImages({
-  ComponentImages: [
-    {
-      ModuleImages: "upload-image"
-    }
-  ],
-})
-
-this.config_Images = [{
+window.saveImages = new saveImagesServer({ Module: "upload-image" })
+window.deleteFile = new deleteFileInServer({ Module: "delete-image" })
+this.config= [{
   contentImput: "image-upload-wrap",
   input: "file-upload-input",
   contentUpload: "file-upload-content",
   viewImages: "file-upload-image",
   titleImages: "image-title",
-  size: "1024",
-  validateSize: false,
   idErr: "errMessage",
-  templateErr: `<div class="alert alert-danger" role="alert">La Imagen no es soportada,Elija otra Imagen</div>`,
-  addImages: false,
-  idAddNewImages: "",
-  templatedBtn: `<button type="button" class="btn btn-success btn-lg btn-sm" onclick="moduleP.addNewData();">Add</button>`,
-  templateNewFileInput: "",
-  nameForm: "imagesUploadOne"
+  templateErr: `<div class="alert alert-danger" role="alert">
+  Imagen no soportada,Intente con otra
+</div>`,
+  nameForm: "imagesUploadOne",
+  validateFormats:true,
+  size: 1024,
+  validateSize: false,
+  preview: false,
+  previewMultiple: true
 }];
 
 function imagesPlugdo(input) {
-  config_Images.push({ data: input });
-  moduleP.registerDataForm(config_Images);
+  config.push({ data: input });
+  saveImages.registerDataForm(config);
+  saveImages.MultipleImages({ result: "result", class: "col-md-3" })
 }
 
 function removeImagesPlugdo() {
-  moduleP.removeImages(config_Images);
+  saveImages.removeImages(config);
 }
 
-function save() {
-  moduleP.saveImages({ url: '/images/upload' });
+function saveImagesServ() {
+  saveImages.saveImages({ url: '/images/upload' });
 }
-
 
