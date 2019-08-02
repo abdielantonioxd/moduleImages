@@ -13,10 +13,10 @@ this.config = [{
   validateFormats: true,
   size: 1024 * 1024,
   validateSize: true,
-  preview: false,
+  preview: true,
   previewMultiple: false,
-  useSweetAlert: false,
-  useAlertify: true
+  useSweetAlert: true,
+  useAlertify: false
 }];
 
 function templated() {
@@ -28,7 +28,7 @@ function templated() {
 function imagesPlugdo(input) {
   config.push({ data: input });
   saveImages.registerDataForm(config);
-  saveImages.MultipleImages({ result: "result", class: "col-lg-4", active: true })
+  saveImages.MultipleImages({ result: "result", class: "col-lg-4", active: false })
 }
 
 function removeImagesPlugdo() {
@@ -36,6 +36,5 @@ function removeImagesPlugdo() {
 }
 
 function saveImagesServ() {
-  saveImages.saveImages({ url: '/post' });
+  saveImages.saveImages({ url: '/upload' });
 }
-

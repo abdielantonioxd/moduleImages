@@ -198,17 +198,13 @@ function saveImagesServer(config) {
       }
 
       if (config.validateFormats != undefined) {
-        if (config.validateFormats != "") {
-          if (config.validateFormats != false) {
-            ValidateFormatsImages()
-          } else {
-            return false
-          }
+        if (config.validateFormats != false) {
+          ValidateFormatsImages()
         } else {
-          throw "The property  'validateFormats' is empty in the configuration"
+          return false
         }
       } else {
-        throw "The property  'validateFormats' is not defined in the configuration"
+        throw new Error("The property  'validateFormats' is undefined in the configuration")
       }
 
     }
@@ -219,23 +215,23 @@ function saveImagesServer(config) {
 
     function validateObject() {
       if (config.contentImput === undefined) {
-        throw `id of input is undefined in configuration`
+        throw new Error(`id of input is undefined in configuration`)
       }
       if (config.viewImages === undefined) {
-        throw `Container of view images is undefined in the  configuration`
+        throw new Error(`Container of view images is undefined in the  configuration`)
       }
 
       if (config.contentUpload === undefined) {
-        throw `Container of Upload images is undefined in the  configuration`
+        throw new Error(`Container of Upload images is undefined in the  configuration`)
       }
 
       if (config.titleImages === undefined) {
-        throw `Container of title images is undefined in the configuration`
+        throw new Error(`Container of title images is undefined in the configuration`)
       }
       if (config.contentImput && config.viewImages && config.contentUpload && config.titleImages != "") {
         renderI()
       } else {
-        throw `the image cannot be displayed because some properties are not defined`
+        throw new Error(`the image cannot be displayed because some properties are not defined`)
       }
 
       function renderI() {
@@ -248,7 +244,8 @@ function saveImagesServer(config) {
             document.getElementById(config.titleImages).innerHTML = configFile.data.files[0].name;
           } else {
             if (config.validateFormats != false) {
-              throw "Solo se aceptan formatos .jpeg/.jpg/.png"
+              document.getElementById(config.viewImages).src = "";
+              throw new Error("Solo se aceptan formatos .jpeg/.jpg/.png")
             }
           }
         };
@@ -276,10 +273,11 @@ function saveImagesServer(config) {
             picReader.readAsDataURL(file);
           }
         } else {
-          throw "Your browser does not support File API";
+          throw new Error("Your browser does not support File API")
         }
       }
     }
+
     self.saveImages = function (link) {
       var URL = link.url;
       var formData = new FormData(document.getElementById(config.nameForm));
@@ -289,42 +287,56 @@ function saveImagesServer(config) {
 
     function saveImagesServer(URL, formData) {
       var request = new XMLHttpRequest();
-      request.upload.addEventListener('progress', function (e) {
-        var percent_complete = (e.loaded / e.total) * 100;
-        // console.log(percent_complete);
-      });
       request.responseType = 'json';
       request.open('post', URL);
       request.send(formData);
       if (request.readyState === 1) {
-        var response = {
-          status: "OK",
-          save: true,
-          response: "Files save in the server"
+        var successObj = {
+          title: "Excelente",
+          text: "Imagen Guardada correctamente",
+          icon: "success"
         }
-        document.getElementById(config.idErr).innerHTML = `<div class="alert alert-success" role="alert">
-          Imagen Guardada correctamente!
-      </div>`;
-        setTimeout(() => {
-          document.getElementById(config.idErr).innerHTML = "";
-        }, 2000);
-        responseImages(response);
-      } else {
-        var response = {
-          status: "Err",
-          save: false,
-          response: ""
-        }
-        document.getElementById(config.idErr).innerHTML = `<div class="alert alert-danger" role="alert">
-        No se Pudo Guardar la Imagen
-      </div>`;
-        setTimeout(() => {
-          document.getElementById(config.idErr).innerHTML = "";
-        }, 2000);
-        responseImages(response);
-      }
+        msnSaveImages(successObj)
 
-      function responseImages(response) {
+      } else {
+        var successObj = {
+          title: "Error",
+          text: "Ocurrio un error vuelva a Ingresar la Imagen",
+          icon: "error"
+        }
+        msnSaveImages(msn)
+      }
+      function msnSaveImages(msn) {
+        if (config.useSweetAlert === true) {
+          swal({
+            title: msn.title,
+            text: msn.text,
+            icon: msn.icon,
+          })
+          responseImages()
+        } else {
+          if (config.useAlertify === true) {
+            alertify.set('notifier', 'position', 'top-right');
+            if (msn.icon != "success") {
+              alertify.error(msn.text);
+            } else {
+              alertify.success(msn.text);
+            }
+            responseImages()
+          } else {
+            if (config.templateErr != "" && config.idErr != "") {
+              document.getElementById(config.idErr).innerHTML = msn.text;
+              setTimeout(() => {
+                document.getElementById(config.idErr).innerHTML = "";
+              }, 2000);
+              responseImages()
+            } else {
+              throw "The propertys of 'error'   is empty in the configuration"
+            }
+          }
+        }
+      }
+      function responseImages() {
         for (let index = 0; index < document.forms.length; index++) {
           if (document.forms[index].id != undefined) {
             if (document.forms[index].id === configFile.data.form.id) {
@@ -337,7 +349,6 @@ function saveImagesServer(config) {
             }
           }
         }
-        console.log(response);
       }
     }
   }
@@ -360,7 +371,7 @@ function deleteFileInServer(config) {
   var self = this;
   var component = config.Module;
   if (component != 'delete-image') {
-    throw "Module is not register in the configuration"
+    throw new Error("Module is not register in the configuration")
   } else {
     self.deleteImages = function (params) {
       var dataDelete = params[0]
