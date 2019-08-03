@@ -1,0 +1,84 @@
+############Modulo de validaciòn y boorado de la imagen #################################
+
+==============================================================================
+## window.saveImages = new saveImagesServer({ Module: "upload-image" })
+eta funcion es con la que iniciamos el modulo y es la encargada de la validacion 
+de la imagen 
+===============================================================================
+          ##########################################################
+
+
+===============================================================================
+window.deleteFile = new deleteFileInServer({
+  Module: "delete-image",
+  msgErrActive: true,
+  useSweetAlert: false,
+  useAlertify: false,
+  useConsole: true
+})
+
+function deleteFiles() {
+  deleteFile.deleteImages({
+    name: '863587.jpg',
+    Url: "/delete"
+  })
+}
+
+
+esta funcion es para eliminar una imagen  total del servidor 
+===============================================================================
+          ##########################################################
+
+
+===============================================================================
+this.config = [{
+  contentImput: "", // contenedor del input 
+  idInput: "", //id del input  de tipo file 
+  contentUpload: "f", // aqui el contenedor del upload donnde se visualisara la imagen  esta obcion si no la vas a usar dejarla vacia, deve estar definida si o si 
+  viewImages: "", //aqui va el id donde se va a visualizar la imagen <img  id="file-upload-image" src="#" alt="your image" />
+  titleImages: "", // id donde visualizara el titulo de la imagen 
+  idErr: "",  // si quiere personalizar el error con bootstrap u otro framework 
+  templateErr: "", // aqui va el template del error 
+  nameForm: "", // importante aqui va el nombre del formlario 
+  validateFormats: true, //  si desea validar los formato
+  size: 2024 * 1024, // limite soportado ojo si va a validar un limite este valor deve ser el mismo  que coloque en su modulo de node.js o cualquier otro lenguje 
+  validateSize: true, // si quiere validar el tamaño aqui activa la funcion de validar 
+  preview: true, // si va a visualizar la imagen 
+  previewMultiple: false, si va a visualizar las multiples imagenes ojo cuando esta opcion este activa la opcion de preview deve estar desactivada si no creara un comflicto y retornara error 
+  useSweetAlert: true, // cuanmdo esta en true le dices ala aplicacion que agarre el template que ya esta definido de SweetAlert ojo deve agregar las libreria de este framewor ya que solo le hacemos referencia a  sus funciones 
+  useAlertify: false // con esta opcion ocurre lo mismo que con el anterior framework de alertas ya los mensajes vienen definios, ustedes solo encanguence de agregar sus librerias 
+}];
+
+esta es la configuracion de nuestro modulo 
+===============================================================================
+
+#####################################################################
+
+≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠
+a esta funcion se le envia el valor del input file como parametro   onchange="imagesPlugdo(this);" 
+function imagesPlugdo(input) {
+
+  ## config.push({ data: input });   // se hace un push a el objeto config con el nombre de (data ) y el valor es el input o el dato que se envio desde el formuario 
+
+ ## saveImages.registerDataForm(config);   // luego se llama a la funcion  de registro de formulario para poder entrar a hacer todos los procesos que puso en la configuracion del objeto config 
+
+  ##saveImages.MultipleImages({ result: "result", class: "col-lg-4", active: false })
+
+  si quiere enviar multiples imagenes use esta function  la propiedad result es donde se va a mostrar las imagenes  la class es la que va a tener cada div generado  y por ultimo la opcion de active si va autilixzar esta funcion deve estar en tru de lo contrario no se le mostrara las visualizaciones conpletas de las imagenes que usted agrego 
+
+
+}
+
+function removeImagesPlugdo() {
+  saveImages.removeImages(config);
+  para remover la imagen se le pasa a la funcion el objeto config ojo esto no eliminara el archivo solo le permitira elegir otra 
+}
+
+function saveImagesServ() {
+  saveImages.saveImages({ url: '/upload' });
+  aqui para guardar el archivo se deve llamar esta funcion y pasarle la url de api 
+}
+
+
+
+≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠
