@@ -11,7 +11,7 @@ this.config = [{
   templateErr: "",
   nameForm: "imagesUploadOne",
   validateFormats: true,
-  size: 1024 * 1024,
+  size: 2024 * 1024,
   validateSize: true,
   preview: true,
   previewMultiple: false,
