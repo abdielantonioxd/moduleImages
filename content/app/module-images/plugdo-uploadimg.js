@@ -105,6 +105,7 @@ function saveImagesServer(config) {
             }
           }
         }
+
         function FuncErrAlertify() {
           if (ObjectMultipleImages.length != 0) {
             if (ObjectMultipleImages[0] != undefined) {
@@ -123,6 +124,7 @@ function saveImagesServer(config) {
           alertify.error("Solo se aceptan formatos .jpeg/.jpg/.png");
 
         }
+
         function FuncErr() {
           if (ObjectMultipleImages.length != 0) {
             if (ObjectMultipleImages[0] != undefined) {
@@ -296,7 +298,7 @@ function saveImagesServer(config) {
           text: "Imagen Guardada correctamente",
           icon: "success"
         }
-        msnSaveImages(successObj)
+        msgErr(successObj)
 
       } else {
         var successObj = {
@@ -304,9 +306,10 @@ function saveImagesServer(config) {
           text: "Ocurrio un error vuelva a Ingresar la Imagen",
           icon: "error"
         }
-        msnSaveImages(msn)
+        msgErr(msn)
       }
-      function msnSaveImages(msn) {
+
+      function msgErr(msn) {
         if (config.useSweetAlert === true) {
           swal({
             title: msn.title,
@@ -336,6 +339,7 @@ function saveImagesServer(config) {
           }
         }
       }
+
       function responseImages() {
         for (let index = 0; index < document.forms.length; index++) {
           if (document.forms[index].id != undefined) {
@@ -344,8 +348,7 @@ function saveImagesServer(config) {
               if (config.preview != false) {
                 document.getElementById(config.contentImput).style.display = "block";
                 document.getElementById(config.contentUpload).style.display = "none";
-              } else {
-              }
+              } else {}
             }
           }
         }
@@ -370,43 +373,84 @@ function saveImagesServer(config) {
 function deleteFileInServer(config) {
   var self = this;
   var component = config.Module;
-  if (component != 'delete-image') {
-    throw new Error("Module is not register in the configuration")
-  } else {
-    self.deleteImages = function (params) {
-      var dataDelete = params[0]
-      if (dataDelete.name != "" && dataDelete.name != undefined) {
-        del()
-      } else {
-        throw "Name File is undefined"
-      }
+  if (config.Module != undefined) {
+    if (config.msgErrActive != undefined) {
+      if (config.useAlertify != undefined) {
+        if (config.useSweetAlert != undefined) {
+          if (config.useConsole != undefined) {
+            if (component != 'delete-image') {
+              throw new Error("Module is not register in the configuration")
+            } else {
+              self.deleteImages = function (params) {
+                console.log(params)
+                var dataDelete = params
+                if (dataDelete.name != "" && dataDelete.name != undefined) {
+                  del()
+                } else {
+                  throw "Name File is undefined"
+                }
 
-      function del() {
-        var request = new XMLHttpRequest();
-        request.open("POST", dataDelete.Url, true);
-        request.setRequestHeader('Content-Type', 'application/json');
-        request.send(JSON.stringify({
-          name: dataDelete.name
-        }));
-        if (request.readyState === 1) {
-          response = {
-            status: "OK",
-            save: true,
-            response: "Files delete"
+                function del() {
+                  var request = new XMLHttpRequest();
+                  request.open("POST", dataDelete.Url, true);
+                  request.setRequestHeader('Content-Type', 'application/json');
+                  request.send(JSON.stringify({
+                    name: dataDelete.name
+                  }));
+                  if (request.readyState === 1) {
+                    var successObj = {
+                      title: "Excelente",
+                      text: "Archivo eliminado correctamente",
+                      icon: "success"
+                    }
+                    msgErr(successObj)
+                  } else {
+                    var errorObj = {
+                      title: "error",
+                      text: "El rchivo no fue  eliminado ",
+                      icon: "error"
+                    }
+                    msgErr(errorObj)
+                  }
+                }
+
+                function msgErr(msn) {
+                  if (config.useSweetAlert === true) {
+                    swal({
+                      title: msn.title,
+                      text: msn.text,
+                      icon: msn.icon,
+                    })
+                  } else {
+                    if (config.useAlertify === true) {
+                      alertify.set('notifier', 'position', 'top-right');
+                      if (msn.icon != "success") {
+                        alertify.error(msn.text);
+                      } else {
+                        alertify.success(msn.text);
+                      }
+                    } else {
+                      if (config.useConsole === true) {
+                        console.log(msn)
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            throw new Error("The property useConsole in not defined")
           }
-          responseFile(response);
         } else {
-          response = {
-            status: "Err",
-            save: false,
-            response: ""
-          }
-          responseFile(response);
+          throw new Error("The property SweetAlert in not defined")
         }
-        function responseFile(response) {
-          console.log(response)
-        }
+      } else {
+        throw new Error("The property useAlertify in not defined")
       }
+    } else {
+      throw new Error("the  property  msgErrActive is  not  defined")
     }
+  } else {
+    throw new Error("the  property  Module is  not  defined")
   }
 }

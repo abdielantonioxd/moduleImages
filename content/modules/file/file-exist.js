@@ -5,7 +5,7 @@ const del = new Router();
 const path = require('path');
 const fs = require('fs');
 
-del.post('/delete/file', (req, res) => {
+del.post('/delete', (req, res) => {
   var File = req.body.name;
   fs.unlink(path.join(__dirname, '../../public/images/') + File, function (err) {
     if (err) {

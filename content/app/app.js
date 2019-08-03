@@ -1,6 +1,16 @@
 'use strict'
-window.saveImages = new saveImagesServer({ Module: "upload-image" })
-window.deleteFile = new deleteFileInServer({ Module: "delete-image" })
+window.saveImages = new saveImagesServer({
+  Module: "upload-image"
+})
+
+window.deleteFile = new deleteFileInServer({
+  Module: "delete-image",
+  msgErrActive: true,
+  useSweetAlert: false,
+  useAlertify: false,
+  useConsole: true
+})
+
 this.config = [{
   contentImput: "image-upload-wrap",
   idInput: "file-upload-input",
@@ -26,9 +36,15 @@ function templated() {
 }
 
 function imagesPlugdo(input) {
-  config.push({ data: input });
+  config.push({
+    data: input
+  });
   saveImages.registerDataForm(config);
-  saveImages.MultipleImages({ result: "result", class: "col-lg-4", active: false })
+  saveImages.MultipleImages({
+    result: "result",
+    class: "col-lg-4",
+    active: false
+  })
 }
 
 function removeImagesPlugdo() {
@@ -36,5 +52,15 @@ function removeImagesPlugdo() {
 }
 
 function saveImagesServ() {
-  saveImages.saveImages({ url: '/upload' });
+  saveImages.saveImages({
+    url: '/upload'
+  });
+}
+
+
+function deleteFiles() {
+  deleteFile.deleteImages({
+    name: '863587.jpg',
+    Url: "/delete"
+  })
 }
