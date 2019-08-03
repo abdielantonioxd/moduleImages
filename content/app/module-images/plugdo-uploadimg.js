@@ -208,7 +208,19 @@ function saveImagesServer(config) {
       } else {
         throw new Error("The property  'validateFormats' is undefined in the configuration")
       }
-
+    }
+    if (config.validateSpace != undefined) {
+        if (config.validateSpace != false ) {
+        var  nameImage = configFile.data.files[0].name;
+        if (nameImage.indexOf(" ") === -1) {
+      } else {
+         throw new Error ("la imagen no deve contener espacios ")
+      }
+        } else {
+          
+        }
+    } else {
+      
     }
 
     function renderImagesOnlyOne() {

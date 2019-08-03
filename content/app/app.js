@@ -23,6 +23,7 @@ this.config = [{
   validateFormats: true,
   size: 2024 * 1024,
   validateSize: true,
+  validateSpace:true,
   preview: true,
   previewMultiple: false,
   useSweetAlert: true,
