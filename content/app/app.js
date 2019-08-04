@@ -1,5 +1,5 @@
 'use strict'
-window.saveImages = new saveImagesServer({
+window.upload = new uploadImagesServer({
   Module: "upload-image"
 })
 
@@ -20,40 +20,33 @@ this.config = [{
   idErr: "errMessage",
   templateErr: "",
   nameForm: "imagesUploadOne",
-  validateFormats: true,
-  size: 2024 * 1024,
-  validateSize: true,
+  size: 1024 *1024,
+  validateSize:false,
+  validateFormats: false,
   validateSpace:true,
   preview: true,
-  previewMultiple: false,
   useSweetAlert: true,
-  useAlertify: false
+  useAlertify: false,
 }];
 
-function templated() {
-  return `<div class="alert alert-danger" role="alert">
-  Imagen excede el limite autorizado
-  </div>`;
-}
-
-function imagesPlugdo(input) {
+function validateUpload(input) {
   config.push({
     data: input
   });
-  saveImages.registerDataForm(config);
-  saveImages.MultipleImages({
-    result: "result",
-    class: "col-lg-4",
+  upload.registerDataForm(config);
+  upload.MultipleImages({
+    result: "previewMultiple",
+    class: "",
     active: false
   })
 }
 
-function removeImagesPlugdo() {
-  saveImages.removeImages(config);
+function chooseAnotherImages() {
+  upload.chooseAnother(config);
 }
 
-function saveImagesServ() {
-  saveImages.saveImages({
+function uploadImagesServ() {
+  upload.saveImages({
     url: '/upload'
   });
 }

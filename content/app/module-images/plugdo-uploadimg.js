@@ -1,4 +1,4 @@
-function saveImagesServer(config) {
+function uploadImagesServer(config) {
 
   if (config.Module != "upload-image") {
     throw "this Module is not Fount in the configuration";
@@ -10,224 +10,89 @@ function saveImagesServer(config) {
   }
 
   self.registerDataForm = function (configImages) {
-
     configFile = configImages[1];
     config = configImages[0];
     if (configImages.length != 0) {
-      if (configFile.data.files && configFile.data.files[0]) {
-        if (config.validateSize === true) {
-          ValidateSizeImages()
-        } else {
-          if (config.validateFormats === true) {
-            validateFormatImages();
-            validatePreviewImages();
-          } else {
-            validatePreviewImages();
-          }
-        }
-      } else {
-        throw "File is not Found";
-      }
+       /* CALL  OPTIONS VALIDATION */
+      func_validateSize();
+      func_validateFormats()
+      func_validateSpace();
+      func_validatePreviewImages();
     } else {
       throw "Object 'config' is Empty";
     }
+    /* OPTIONS VALIDATION */
 
-    function validatePreviewImages() {
-      if (config.preview === undefined) {
-        throw "Property 'preview' in not defined in the configuration"
-      } else {
-        if (config.preview === false) {
-          if (config.previewMultiple === undefined) {
-            throw "Property 'PreviewMultiple' in not defined in the configuration"
-          } else {
-            if (config.previewMultiple === true) {
-              Multiple = true;
-            } else {
-              Multiple = false;
+    function func_validateSize() {
+      if (config.validateSize != false) {
+        ValidateSizeImages()
+      }
+    }
+
+    function func_validateFormats() {
+      if (config.validateFormats != false) {
+        validateFormatImages();
+      }
+    }
+
+    function func_validateSpace() {
+      if (config.validateSpace != undefined) {
+        if (config.validateSpace != false) {
+          if (config.previewMultiple != true) {
+            var nameImage = configFile.data.files[0].name;
+            if (nameImage.indexOf(" ") === -1) {} else {
+              var err = {
+                title: "Error",
+                text: "El nombre de la imagen no deve contener espacios",
+                icon: "error"
+              }
+              msgErr(err)
             }
+          } else {
+            throw new Error("la propiedad de validacion de espacios  no deve no esta disponible para Multiples imagenes ")
           }
-        } else {
-          renderImagesOnlyOne();
         }
       }
     }
 
+    function func_validatePreviewImages() {
+      if (config.preview != false) {
+        renderImagesOnlyOne()
+      }
+    }
+
+    /* ······END OPTIONS VALIDATION······ */
+
+    function ValidateSizeImages() {
+      if (configFile.data.files[0].size > config.size) {
+        var errorObj = {
+          title: "Error",
+          text: "Imagen excede el limite autorizado",
+          icon: "error"
+        }
+        msgErr(errorObj)
+      }
+    }
+    
     function validateFormatImages() {
-      if (config.validateFormats === undefined) {
-        throw "The property 'validateFormats' is not defined"
-      } else {
-        if (config.validateFormats != false) {
-          ValidateFormatsImages()
-        }
-      }
-    }
-
-
-    function ValidateFormatsImages() {
       if (config.idInput != "") {
         var fileInput = document.getElementById(config.idInput);
         var filePath = fileInput.value;
         var allowedExtensions = /(.jpg|.jpeg|.png)$/i;
         if (!allowedExtensions.exec(filePath)) {
-          if (config.useAlertify != false) {
-            FuncErrAlertify()
-          } else {
-            if (config.useSweetAlert != false) {
-              FuncErr()
-            } else {
-              if (config.idErr != undefined) {
-                if (config.idErr != "") {
-                  document.getElementById(config.idErr).innerHTML = `${config.templateErr}`;
-                  setTimeout(() => {
-                    document.getElementById(config.idErr).innerHTML = "";
-                  }, 2000);
-                }
-              } else {
-                throw 'Id  "Error" is not defined in the configuration';
-              }
-            }
-          }
-          if (config.previewMultiple != false) {
-            Multiple = true;
-          } else {
-            Multiple = false;
-          }
-          document.getElementById(config.idInput).value = "";
-          throw new Error('Please upload file having extensions .jpeg/.jpg/.png/.gif only.');
-
-        } else {
-          if (config.validateSize != false) {
-            document.getElementById(config.contentImput).style.display = "block";
-            document.getElementById(config.contentUpload).style.display = "none";
-          } else {
-            if (config.preview === true) {
-              renderImagesOnlyOne();
-            }
-          }
-        }
-
-        function FuncErrAlertify() {
-          if (ObjectMultipleImages.length != 0) {
-            if (ObjectMultipleImages[0] != undefined) {
-              if (ObjectMultipleImages[0].result != undefined) {
-                if (ObjectMultipleImages[0].result != "") {
-                  document.getElementById(ObjectMultipleImages[0].result).innerHTML = "";
-                }
-              } else {
-                throw "Error the object 'result' of MultipleImages is not defined in the configuration"
-              }
-            } else {
-              throw "Error the position [0] of MultipleImages is not defined in the configuration"
-            }
-          }
-          alertify.set('notifier', 'position', 'top-right');
-          alertify.error("Solo se aceptan formatos .jpeg/.jpg/.png");
-
-        }
-
-        function FuncErr() {
-          if (ObjectMultipleImages.length != 0) {
-            if (ObjectMultipleImages[0] != undefined) {
-              if (ObjectMultipleImages[0].result != undefined) {
-                if (ObjectMultipleImages[0].result != "") {
-                  document.getElementById(ObjectMultipleImages[0].result).innerHTML = "";
-                }
-              }
-            }
-          }
-          swal({
-            title: "Erorr",
+          var errorObj = {
+            title: "Error",
             text: "Solo se aceptan formatos .jpeg/.jpg/.png",
-            icon: "error",
-          })
-          if (config.validateSize != false) {
-            if (config.preview != false) {
-              for (let index = 0; index < document.forms.length; index++) {
-                if (document.forms[index].id != undefined) {
-                  if (document.forms[index].id === configFile.data.form.id) {
-                    document.forms[index].reset();
-                  }
-                }
-              }
-            }
+            icon: "error"
           }
+          msgErr(errorObj)
         }
       } else {
         throw "The id of input in not defined in the configuration"
       }
     }
 
-    function ValidateSizeImages() {
-      if (config.templateErr === undefined) {
-        throw "The property 'templatedErr'   is undefined in the configuration"
-      } else {
-        if (config.templateErr != undefined) {
-          if (configFile.data.files[0].size > config.size) {
-            if (config.useSweetAlert === true) {
-              swal({
-                title: "Erorr",
-                text: "Imagen excede el limite autorizado",
-                icon: "error",
-              })
-            } else {
-              if (config.useAlertify === true) {
-                alertify.set('notifier', 'position', 'top-right');
-                alertify.error('Imagen excede el limite autorizado');
-              } else {
-                if (config.templateErr != "" && config.idErr != "") {
-                  document.getElementById(config.idErr).innerHTML = `${config.templateErr}`;
-                  setTimeout(() => {
-                    document.getElementById(config.idErr).innerHTML = "";
-                  }, 2000);
-                } else {
-                  throw "The propertys of 'error'   is empty in the configuration"
-                }
-              }
-            }
-          } else {
-            if (config.preview === true) {
-              renderImagesOnlyOne();
-            } else {
-              if (config.previewMultiple != true) {
-                validateFormatImages();
-              } else {
-
-              }
-
-            }
-          }
-        }
-      }
-
-      if (config.validateFormats != undefined) {
-        if (config.validateFormats != false) {
-          ValidateFormatsImages()
-        } else {
-          return false
-        }
-      } else {
-        throw new Error("The property  'validateFormats' is undefined in the configuration")
-      }
-    }
-    if (config.validateSpace != undefined) {
-        if (config.validateSpace != false ) {
-        var  nameImage = configFile.data.files[0].name;
-        if (nameImage.indexOf(" ") === -1) {
-      } else {
-         throw new Error ("la imagen no deve contener espacios ")
-      }
-        } else {
-          
-        }
-    } else {
-      
-    }
-
     function renderImagesOnlyOne() {
-      validateObject()
-    }
-
-    function validateObject() {
       if (config.contentImput === undefined) {
         throw new Error(`id of input is undefined in configuration`)
       }
@@ -256,14 +121,70 @@ function saveImagesServer(config) {
           document.getElementById(config.contentUpload).style.display = "block";
           if (configFile.data.files.length != 0) {
             document.getElementById(config.titleImages).innerHTML = configFile.data.files[0].name;
-          } else {
-            if (config.validateFormats != false) {
-              document.getElementById(config.viewImages).src = "";
-              throw new Error("Solo se aceptan formatos .jpeg/.jpg/.png")
-            }
           }
         };
         reader.readAsDataURL(configFile.data.files[0]);
+    }
+    }
+
+      /* ······FUNCTION GLOBAL ERROR ······ */
+      function msgErr(msn) {
+        if (config.useSweetAlert === true) {
+          swal({
+            title: msn.title,
+            text: msn.text,
+            icon: msn.icon,
+          })
+          responseImages()
+        } else {
+          if (config.useAlertify === true) {
+            alertify.set('notifier', 'position', 'top-right');
+            if (msn.icon != "success") {
+              alertify.error(msn.text);
+            } else {
+              alertify.success(msn.text);
+            }
+            responseImages()
+          } else {
+            if (config.templateErr != "" && config.idErr != "") {
+              document.getElementById(config.idErr).innerHTML = msn.text;
+              setTimeout(() => {
+                document.getElementById(config.idErr).innerHTML = "";
+              }, 2000);
+              responseImages()
+            } else {
+              throw "The propertys of 'error'   is empty in the configuration"
+            }
+          }
+        }
+      }
+   /* ······END FUNCTION GLOBAL ERROR ······ */
+
+      function responseImages() {
+        for (let index = 0; index < document.forms.length; index++) {
+          if (document.forms[index].id != undefined) {
+            if (document.forms[index].id === configFile.data.form.id) {
+              document.forms[index].reset();
+              if (config.preview != false) {
+                document.getElementById(config.contentImput).style.display = "block";
+                document.getElementById(config.contentUpload).style.display = "none";
+              } else {}
+            }
+          }
+        }
+      }
+  
+    self.chooseAnother = function (configDelete) {
+      configFile = configDelete[1];
+      config = configDelete[0];
+      for (let index = 0; index < document.forms.length; index++) {
+        if (document.forms[index].id != undefined) {
+          if (document.forms[index].id === configFile.data.form.id) {
+            document.forms[index].reset();
+            document.getElementById(config.contentImput).style.display = "block";
+            document.getElementById(config.contentUpload).style.display = "none";
+          }
+        }
       }
     }
 
@@ -295,91 +216,43 @@ function saveImagesServer(config) {
     self.saveImages = function (link) {
       var URL = link.url;
       var formData = new FormData(document.getElementById(config.nameForm));
+      console.log(formData)
       formData.append("dato", "valor");
-      saveImagesServer(URL, formData);
-    }
-
-    function saveImagesServer(URL, formData) {
-      var request = new XMLHttpRequest();
-      request.responseType = 'json';
-      request.open('post', URL);
-      request.send(formData);
-      if (request.readyState === 1) {
-        var successObj = {
-          title: "Excelente",
-          text: "Imagen Guardada correctamente",
-          icon: "success"
-        }
-        msgErr(successObj)
-
+      if (URL != "") {     
+         saveImagesServer(URL, formData) 
       } else {
-        var successObj = {
+        var Errobject = {
           title: "Error",
-          text: "Ocurrio un error vuelva a Ingresar la Imagen",
+          text: "Por favor coloque una Url de  Api a cual se enviaran los datos.",
           icon: "error"
         }
-        msgErr(msn)
+        msgErr(Errobject)
       }
-
-      function msgErr(msn) {
-        if (config.useSweetAlert === true) {
-          swal({
-            title: msn.title,
-            text: msn.text,
-            icon: msn.icon,
-          })
-          responseImages()
+      function saveImagesServer(URL, formData) {
+        var request = new XMLHttpRequest();
+        request.responseType = 'json';
+        request.open('post', URL);
+        request.send(formData);
+        if (request.readyState === 1) {
+          var successObj = {
+            title: "Excelente",
+            text: "Imagen Guardada correctamente",
+            icon: "success"
+          }
+          msgErr(successObj)
         } else {
-          if (config.useAlertify === true) {
-            alertify.set('notifier', 'position', 'top-right');
-            if (msn.icon != "success") {
-              alertify.error(msn.text);
-            } else {
-              alertify.success(msn.text);
-            }
-            responseImages()
-          } else {
-            if (config.templateErr != "" && config.idErr != "") {
-              document.getElementById(config.idErr).innerHTML = msn.text;
-              setTimeout(() => {
-                document.getElementById(config.idErr).innerHTML = "";
-              }, 2000);
-              responseImages()
-            } else {
-              throw "The propertys of 'error'   is empty in the configuration"
-            }
+          var errorObject = {
+            title: "Error",
+            text: "Ocurrio un error vuelva a Ingresar la Imagen",
+            icon: "error"
           }
+          msgErr(errorObject)
         }
       }
+    }
+  }
 
-      function responseImages() {
-        for (let index = 0; index < document.forms.length; index++) {
-          if (document.forms[index].id != undefined) {
-            if (document.forms[index].id === configFile.data.form.id) {
-              document.forms[index].reset();
-              if (config.preview != false) {
-                document.getElementById(config.contentImput).style.display = "block";
-                document.getElementById(config.contentUpload).style.display = "none";
-              } else {}
-            }
-          }
-        }
-      }
-    }
-  }
-  self.removeImages = function (configDelete) {
-    configFile = configDelete[1];
-    config = configDelete[0];
-    for (let index = 0; index < document.forms.length; index++) {
-      if (document.forms[index].id != undefined) {
-        if (document.forms[index].id === configFile.data.form.id) {
-          document.forms[index].reset();
-          document.getElementById(config.contentImput).style.display = "block";
-          document.getElementById(config.contentUpload).style.display = "none";
-        }
-      }
-    }
-  }
+
 }
 
 function deleteFileInServer(config) {

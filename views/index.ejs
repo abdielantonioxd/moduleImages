@@ -4,6 +4,7 @@
 
 <body>
         <!-- <img src="public/images/plugdo-bg.jpg" alt="" srcset=""> -->
+
     <div class="container">
         <div class="row">
             <div class="col-sm-8">
@@ -13,7 +14,7 @@
                     </div>
                     <div class="image-upload-wrap" id="image-upload-wrap">
                         <input type='file' multiple="multiple" class="file-upload-input" id="file-upload-input"
-                            name="image" onchange="imagesPlugdo(this);" />
+                            name="image" onchange="validateUpload(this);" />
                         <div class="drag-text">
                             <h3>Seleciona una imagen de tu producto </h3>
                         </div>
@@ -21,8 +22,8 @@
                     <div class="file-upload-content" id="file-upload-content">
                         <img class="file-upload-image" id="file-upload-image" src="#" alt="your image" />
                         <div class="image-title-wrap">
-                            <button type="button" onclick="removeImagesPlugdo()"
-                                class="btn btn-danger btn-block">Eliminar
+                            <button type="button" onclick="chooseAnotherImages()"
+                                class="btn btn-danger btn-block">Eligir Otra 
                                 <span class="image-title" id="image-title">Uploaded
                                     Image</span>
                             </button>
@@ -30,7 +31,7 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-sm-12">
-                            <button type="button" class="btn btn-success  btn-block" onclick="saveImagesServ()">Guardar
+                            <button type="button" class="btn btn-success  btn-block" onclick="uploadImagesServ()">Guardar
                                 Imagen</button>
                         </div>
                     </div>
@@ -38,10 +39,11 @@
             </div>
         </div>
     </div>
+
     <div class="container">
         <div class="row">
                 <div class="col-md-12" >
-                    <div  id="result">
+                    <div  id="previewMultiple">
                     </div>
                 </div>     
         </div>
